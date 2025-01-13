@@ -1,17 +1,13 @@
-import React, { useEffect } from 'react';
-import { testBackendConnection } from './api';
+import React from 'react';
+import Spreadsheet from './components/Spreadsheet.jsx';
 
 function App() {
-  useEffect(() => {
-    // Call the function to test backend connection
-    testBackendConnection();
-  }, []);
-
-  return (
-    <div className="App">
-      <h1>React App Connected to Backend</h1>
-    </div>
-  );
+    return (
+        <div className="App">
+            <h1>Google Sheets Mimic</h1>
+            <Spreadsheet />
+        </div>
+    );
 }
 
 export default App;
