@@ -3,7 +3,7 @@ import { testBackendConnection } from './api';
 
 function App() {
   useEffect(() => {
-    // Call the function to test backend connection
+    // Test the connection to the backend
     testBackendConnection();
   }, []);
 
