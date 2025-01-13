@@ -7,6 +7,8 @@ const cols = 10;
 const Spreadsheet = () => {
     const [data, setData] = useState({});
     const [draggedValue, setDraggedValue] = useState(null);
+    const [formulaInput, setFormulaInput] = useState('');
+
 
     const handleInputChange = (row, col, value) => {
         const updatedData = { ...data, [`${row}-${col}`]: value };
@@ -23,8 +25,29 @@ const Spreadsheet = () => {
             handleInputChange(row, col, draggedValue);
         }
     };
+    const handleCellClick = (row, col) => {
+        setSelectedCell(`${row}-${col}`);
+        setFormulaInput(data[`${row}-${col}`] || '');
+    };
 
+    const handleFormulaChange = (e) => {
+        const value = e.target.value;
+        setFormulaInput(value);
+        if (selectedCell) {
+            const [row, col] = selectedCell.split('-').map(Number);
+            handleInputChange(row, col, value);
+        }
+    };
     return (
+        <div>
+            <div className="formula-bar">
+                <input
+                    type="text"
+                    value={formulaInput}
+                    onChange={handleFormulaChange}
+                    placeholder="Enter a formula or value"
+                />
+            </div>
         <div className="spreadsheet">
             <div className="header-row">
                 <div className="header-cell"></div>
@@ -49,6 +72,7 @@ const Spreadsheet = () => {
                                 e.target.value
                             )
                         }
+                        onClick={() => handleCellClick(rowIndex, colIndex)}
                         draggable
                                 onDragStart={() => handleDragStart(rowIndex, colIndex)}
                                 onDrop={() => handleDrop(rowIndex, colIndex)}
@@ -57,6 +81,7 @@ const Spreadsheet = () => {
                     ))}
                 </div>
             ))}
+        </div>
         </div>
     );
 };

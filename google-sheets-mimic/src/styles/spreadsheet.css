@@ -30,3 +30,16 @@
 .cell:focus {
     outline: 2px solid #0073e6;
 }
+.formula-bar {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.formula-bar input {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
