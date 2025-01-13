@@ -7,6 +7,9 @@ const cols = 10;
 
 const Spreadsheet = () => {
     const [data, setData] = useState({});
+    const [selectedRange, setSelectedRange] = useState('');
+    const [findText, setFindText] = useState('');
+    const [replaceText, setReplaceText] = useState('');
     const [draggedValue, setDraggedValue] = useState(null);
     const [selectedCell, setSelectedCell] = useState(null);
     const [formulaInput, setFormulaInput] = useState('');
@@ -26,6 +29,68 @@ const Spreadsheet = () => {
                 console.error('Error fetching data:', error);
             });
     }, []);
+    const applyTrim = () => {
+        updateRange((value) => value.trim());
+    };
+
+    const applyUpperCase = () => {
+        updateRange((value) => value.toUpperCase());
+    };
+
+    const applyLowerCase = () => {
+        updateRange((value) => value.toLowerCase());
+    };
+
+    const applyFindAndReplace = () => {
+        updateRange((value) =>
+            value.replace(new RegExp(findText, 'g'), replaceText)
+        );
+    };
+
+    const removeDuplicates = () => {
+        const uniqueValues = new Set();
+        updateRange((value) => {
+            if (uniqueValues.has(value)) return '';
+            uniqueValues.add(value);
+            return value;
+        });
+    };
+
+    const updateRange = (transformFn) => {
+        if (!selectedRange) return;
+
+        const [start, end] = selectedRange.split(':');
+        const [startRow, startCol] = cellToIndex(start);
+        const [endRow, endCol] = cellToIndex(end);
+
+        const updatedData = { ...data };
+        for (let i = startRow; i <= endRow; i++) {
+            for (let j = startCol; j <= endCol; j++) {
+                const key = `${i}-${j}`;
+                if (updatedData[key]) {
+                    updatedData[key] = transformFn(updatedData[key]);
+                }
+            }
+        }
+        setData(updatedData);
+
+        // Optional: Save updated data to the backend
+        Object.keys(updatedData).forEach((key) => {
+            const [row, col] = key.split('-').map(Number);
+            axios.post('http://localhost:3001/cells', {
+                row,
+                col,
+                value: updatedData[key],
+            });
+        });
+    };
+
+   /* const cellToIndex = (cell) => {
+        const col = cell.charCodeAt(0) - 65; // 'A' = 65
+        const row = parseInt(cell.slice(1), 10) - 1;
+        return [row, col];
+    };
+    */
 
     // Parse formula entered by the user
     const parseFormula = (formula) => {
@@ -159,7 +224,33 @@ const Spreadsheet = () => {
 
     return (
         <div>
-            
+            <div className="spreadsheet-container">
+            <div className="toolbar">
+                <input
+                    type="text"
+                    placeholder="Select Range (e.g., A1:B3)"
+                    value={selectedRange}
+                    onChange={(e) => setSelectedRange(e.target.value.toUpperCase())}
+                />
+                <button onClick={applyTrim}>TRIM</button>
+                <button onClick={applyUpperCase}>UPPER</button>
+                <button onClick={applyLowerCase}>LOWER</button>
+                <button onClick={removeDuplicates}>REMOVE DUPLICATES</button>
+                <input
+                    type="text"
+                    placeholder="Find"
+                    value={findText}
+                    onChange={(e) => setFindText(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Replace"
+                    value={replaceText}
+                    onChange={(e) => setReplaceText(e.target.value)}
+                />
+                <button onClick={applyFindAndReplace}>FIND & REPLACE</button>
+            </div>
+            </div>
             <div className="formula-bar">
                 <input
                     type="text"
