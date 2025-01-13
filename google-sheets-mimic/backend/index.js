@@ -21,9 +21,33 @@ db.connect((err) => {
 });
 
 // Test API
-app.get('/', (req, res) => {
-    res.send('Backend is running');
+app.get('/cells', (req, res) => {
+    const query = 'SELECT * FROM cells';
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.send(results);
+    });
 });
+
+// API to save or update cell data
+app.post('/cells', (req, res) => {
+    const { row, col, value } = req.body;
+
+    const query = `
+        INSERT INTO cells (row_number, column_number, value)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE value = ?;
+    `;
+    db.query(query, [row, col, value, value], (err, results) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.send({ message: 'Cell data saved successfully' });
+    });
+});
+
 
 app.listen(3001, () => {
     console.log('Server is running on port 3001');
