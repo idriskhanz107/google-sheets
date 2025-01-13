@@ -6,10 +6,22 @@ const cols = 10;
 
 const Spreadsheet = () => {
     const [data, setData] = useState({});
+    const [draggedValue, setDraggedValue] = useState(null);
 
     const handleInputChange = (row, col, value) => {
         const updatedData = { ...data, [`${row}-${col}`]: value };
         setData(updatedData);
+    };
+
+    const handleDragStart = (row, col) => {
+        const cellKey = `${row}-${col}`;
+        setDraggedValue(data[cellKey] || '');
+    };
+
+    const handleDrop = (row, col) => {
+        if (draggedValue !== null) {
+            handleInputChange(row, col, draggedValue);
+        }
     };
 
     return (
@@ -27,12 +39,20 @@ const Spreadsheet = () => {
                     <div className="row-header">{rowIndex + 1}</div>
                     {Array.from({ length: cols }, (_, colIndex) => (
                         <input
-                            key={`${rowIndex}-${colIndex}`}
-                            className="cell"
-                            value={data[`${rowIndex}-${colIndex}`] || ''}
-                            onChange={(e) =>
-                                handleInputChange(rowIndex, colIndex, e.target.value)
-                            }
+                        key={cellKey}
+                        className="cell"
+                        value={data[cellKey] || ''}
+                        onChange={(e) =>
+                            handleInputChange(
+                                rowIndex,
+                                colIndex,
+                                e.target.value
+                            )
+                        }
+                        draggable
+                                onDragStart={() => handleDragStart(rowIndex, colIndex)}
+                                onDrop={() => handleDrop(rowIndex, colIndex)}
+                                onDragOver={(e) => e.preventDefault()}
                         />
                     ))}
                 </div>
