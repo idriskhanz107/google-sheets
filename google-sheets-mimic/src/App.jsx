@@ -1,6 +1,6 @@
 import React from 'react';
 import Spreadsheet from './components/Spreadsheet.jsx';
-import Toolbar from './components/Toolbar';
+import Toolbar from './components/Toolbar.jsx';
 
 function App() {
     return (

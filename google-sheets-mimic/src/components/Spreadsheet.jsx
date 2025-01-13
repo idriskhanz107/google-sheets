@@ -62,16 +62,12 @@ const Spreadsheet = () => {
                     <div className="row-header">{rowIndex + 1}</div>
                     {Array.from({ length: cols }, (_, colIndex) => (
                         <input
-                        key={cellKey}
-                        className="cell"
-                        value={data[cellKey] || ''}
-                        onChange={(e) =>
-                            handleInputChange(
-                                rowIndex,
-                                colIndex,
-                                e.target.value
-                            )
-                        }
+                            key={`${rowIndex}-${colIndex}`}
+                            className="cell"
+                            value={data[`${rowIndex}-${colIndex}`] || ''}
+                            onChange={(e) =>
+                                handleInputChange(rowIndex, colIndex, e.target.value)
+                            }
                         onClick={() => handleCellClick(rowIndex, colIndex)}
                         draggable
                                 onDragStart={() => handleDragStart(rowIndex, colIndex)}
