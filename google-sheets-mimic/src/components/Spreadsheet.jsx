@@ -5,6 +5,7 @@ import '../styles/spreadsheet.css';
 const rows = 20;
 const cols = 10;
 
+
 const Spreadsheet = () => {
     const [data, setData] = useState({});
     const [selectedRange, setSelectedRange] = useState('');

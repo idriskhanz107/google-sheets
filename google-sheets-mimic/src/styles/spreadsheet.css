@@ -44,3 +44,9 @@
 }
 
 
+.error-message {
+    color: #ff4d4d;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
